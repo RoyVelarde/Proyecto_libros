@@ -29,7 +29,7 @@ final class AboutModalViewController: UIViewController {
         titleLabel.textAlignment = .center
         
         let membersLabel = UILabel()
-        membersLabel.text = "Integrantes:\n Integrante 1\n Integrante 2\n VELARDE LAINES, Roy Heberth."
+        membersLabel.text = "Integrantes:\n Kevin Arnold Eca Pilcon\n Jazmin Anabel Herhuay Huamán\n Cristopher Joau Morales Sajami\n Deborah Elena Vela Villamonte\n Roy Heberth Velarde Laines"
         membersLabel.numberOfLines = 0
         membersLabel.font = .systemFont(ofSize: 15)
         membersLabel.textAlignment = .center
