@@ -4,43 +4,30 @@
 //
 //  Created by XCODE on 11/08/26.
 //
+
+
 import UIKit
 
-final class RegisterViewController: UIViewController {
-    
-    private let viewModel = AuthViewModel()
-    
+final class LoginViewController: UIViewController {
 
     
+    private let viewModel = AuthViewModel()
     private let backgroundView = UIView()
     private let cardView = UIView()
-    
     private let logoView = UIView()
     private let logoLabel = UILabel()
-    
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
-    
     private let userContainer = UIView()
     private let userIcon = UIImageView()
     private let userTextField = UITextField()
-    
     private let passwordContainer = UIView()
     private let passwordIcon = UIImageView()
     private let passTextField = UITextField()
+    private let loginButton = UIButton(type: .system)
+    private let goToRegisterButton = UIButton(type: .system)
+    private let activityIndicator = UIActivityIndicatorView(style: .medium)
     
-    private let registerButton = UIButton(type: .system)
-    private let backButton = UIButton(type: .system)
-    
- 
-    private let primaryColor = UIColor(
-        red: 0.30,
-        green: 0.25,
-        blue: 0.85,
-        alpha: 1.0
-    )
-    
-  
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +35,6 @@ final class RegisterViewController: UIViewController {
         setupUI()
         setupKeyboard()
     }
-    
     
     private func setupUI() {
         view.backgroundColor = UIColor(
@@ -58,24 +44,26 @@ final class RegisterViewController: UIViewController {
             alpha: 1.0
         )
         
-        title = "Registro de Usuario"
-        
         setupBackground()
         setupCard()
         setupLogo()
         setupLabels()
         setupUserField()
         setupPasswordField()
+        setupLoginButton()
         setupRegisterButton()
-        setupBackButton()
         setupStack()
     }
-    
     
     private func setupBackground() {
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
-        backgroundView.backgroundColor = primaryColor
+        backgroundView.backgroundColor = UIColor(
+            red: 0.30,
+            green: 0.25,
+            blue: 0.85,
+            alpha: 1.0
+        )
         
         view.addSubview(backgroundView)
         
@@ -95,7 +83,6 @@ final class RegisterViewController: UIViewController {
             )
         ])
     }
-
     
     private func setupCard() {
         cardView.translatesAutoresizingMaskIntoConstraints = false
@@ -105,10 +92,7 @@ final class RegisterViewController: UIViewController {
         
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowOpacity = 0.12
-        cardView.layer.shadowOffset = CGSize(
-            width: 0,
-            height: 8
-        )
+        cardView.layer.shadowOffset = CGSize(width: 0, height: 8)
         cardView.layer.shadowRadius = 20
         
         view.addSubview(cardView)
@@ -128,13 +112,17 @@ final class RegisterViewController: UIViewController {
         ])
     }
     
-    
     private func setupLogo() {
         logoView.translatesAutoresizingMaskIntoConstraints = false
         
-        logoView.backgroundColor = primaryColor
-        logoView.layer.cornerRadius = 32
+        logoView.backgroundColor = UIColor(
+            red: 0.30,
+            green: 0.25,
+            blue: 0.85,
+            alpha: 1.0
+        )
         
+        logoView.layer.cornerRadius = 32
         logoLabel.translatesAutoresizingMaskIntoConstraints = false
         logoLabel.text = "P"
         logoLabel.textColor = .white
@@ -143,7 +131,6 @@ final class RegisterViewController: UIViewController {
             weight: .bold
         )
         logoLabel.textAlignment = .center
-        
         logoView.addSubview(logoLabel)
         cardView.addSubview(logoView)
         
@@ -171,11 +158,10 @@ final class RegisterViewController: UIViewController {
         ])
     }
     
-    
     private func setupLabels() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        titleLabel.text = "Crear Cuenta"
+        titleLabel.text = "Proyecto Final"
         titleLabel.textColor = UIColor(
             red: 0.12,
             green: 0.12,
@@ -187,10 +173,8 @@ final class RegisterViewController: UIViewController {
             weight: .bold
         )
         titleLabel.textAlignment = .center
-        
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        subtitleLabel.text = "Completa los datos para registrarte"
+        subtitleLabel.text = "Inicia sesión para continuar"
         subtitleLabel.textColor = .systemGray
         subtitleLabel.font = .systemFont(
             ofSize: 15,
@@ -198,10 +182,8 @@ final class RegisterViewController: UIViewController {
         )
         subtitleLabel.textAlignment = .center
         subtitleLabel.numberOfLines = 0
-        
         cardView.addSubview(titleLabel)
         cardView.addSubview(subtitleLabel)
-        
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(
                 equalTo: logoView.bottomAnchor,
@@ -231,18 +213,22 @@ final class RegisterViewController: UIViewController {
         ])
     }
     
-    
     private func setupUserField() {
         setupTextFieldContainer(userContainer)
         
         userIcon.image = UIImage(
             systemName: "person.fill"
         )
-        userIcon.tintColor = primaryColor
-        userIcon.contentMode = .scaleAspectFit
+        userIcon.tintColor = UIColor(
+            red: 0.30,
+            green: 0.25,
+            blue: 0.85,
+            alpha: 1.0
+        )
         userIcon.translatesAutoresizingMaskIntoConstraints = false
+        userIcon.contentMode = .scaleAspectFit
         
-        userTextField.placeholder = "Nuevo Usuario"
+        userTextField.placeholder = "Usuario"
         userTextField.borderStyle = .none
         userTextField.backgroundColor = .clear
         userTextField.font = .systemFont(
@@ -253,10 +239,17 @@ final class RegisterViewController: UIViewController {
         userTextField.autocorrectionType = .no
         userTextField.keyboardType = .default
         userTextField.returnKeyType = .next
+        userTextField.textColor = .label
+        
+        userIcon.setContentHuggingPriority(
+            .required,
+            for: .horizontal
+        )
         
         userContainer.addSubview(userIcon)
         userContainer.addSubview(userTextField)
         
+        userIcon.translatesAutoresizingMaskIntoConstraints = false
         userTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -291,7 +284,7 @@ final class RegisterViewController: UIViewController {
         ])
     }
     
-
+    // MARK: - Password Field
     
     private func setupPasswordField() {
         setupTextFieldContainer(passwordContainer)
@@ -299,13 +292,16 @@ final class RegisterViewController: UIViewController {
         passwordIcon.image = UIImage(
             systemName: "lock.fill"
         )
-        passwordIcon.tintColor = primaryColor
-        passwordIcon.contentMode = .scaleAspectFit
+        passwordIcon.tintColor = UIColor(
+            red: 0.30,
+            green: 0.25,
+            blue: 0.85,
+            alpha: 1.0
+        )
         passwordIcon.translatesAutoresizingMaskIntoConstraints = false
+        passwordIcon.contentMode = .scaleAspectFit
         
-        passTextField.placeholder =
-            "Contrasena"
-        
+        passTextField.placeholder = "Contraseña"
         passTextField.borderStyle = .none
         passTextField.backgroundColor = .clear
         passTextField.font = .systemFont(
@@ -316,10 +312,17 @@ final class RegisterViewController: UIViewController {
         passTextField.autocapitalizationType = .none
         passTextField.autocorrectionType = .no
         passTextField.returnKeyType = .done
+        passTextField.textColor = .label
+        
+        passwordIcon.setContentHuggingPriority(
+            .required,
+            for: .horizontal
+        )
         
         passwordContainer.addSubview(passwordIcon)
         passwordContainer.addSubview(passTextField)
         
+        passwordIcon.translatesAutoresizingMaskIntoConstraints = false
         passTextField.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -354,10 +357,9 @@ final class RegisterViewController: UIViewController {
         ])
     }
     
+    // MARK: - TextField Container
     
-    private func setupTextFieldContainer(
-        _ container: UIView
-    ) {
+    private func setupTextFieldContainer(_ container: UIView) {
         container.translatesAutoresizingMaskIntoConstraints = false
         
         container.backgroundColor = UIColor(
@@ -369,8 +371,7 @@ final class RegisterViewController: UIViewController {
         
         container.layer.cornerRadius = 12
         container.layer.borderWidth = 1
-        container.layer.borderColor =
-            UIColor.systemGray5.cgColor
+        container.layer.borderColor = UIColor.systemGray5.cgColor
         
         NSLayoutConstraint.activate([
             container.heightAnchor.constraint(
@@ -379,58 +380,66 @@ final class RegisterViewController: UIViewController {
         ])
     }
     
+    // MARK: - Login Button
     
-    private func setupRegisterButton() {
-        registerButton.translatesAutoresizingMaskIntoConstraints = false
+    private func setupLoginButton() {
+        loginButton.translatesAutoresizingMaskIntoConstraints = false
         
-        registerButton.setTitle(
-            "Registrarse",
+        loginButton.setTitle(
+            "Iniciar Sesión",
             for: .normal
         )
         
-        registerButton.setTitleColor(
+        loginButton.setTitleColor(
             .white,
             for: .normal
         )
         
-        registerButton.titleLabel?.font = .systemFont(
+        loginButton.titleLabel?.font = .systemFont(
             ofSize: 17,
             weight: .semibold
         )
         
-        registerButton.backgroundColor = primaryColor
-        registerButton.layer.cornerRadius = 14
+        loginButton.backgroundColor = UIColor(
+            red: 0.30,
+            green: 0.25,
+            blue: 0.85,
+            alpha: 1.0
+        )
         
-        registerButton.layer.shadowColor =
+        loginButton.layer.cornerRadius = 14
+        
+        loginButton.layer.shadowColor =
             UIColor.systemIndigo.cgColor
         
-        registerButton.layer.shadowOpacity = 0.25
-        registerButton.layer.shadowOffset =
+        loginButton.layer.shadowOpacity = 0.25
+        loginButton.layer.shadowOffset =
             CGSize(width: 0, height: 5)
-        registerButton.layer.shadowRadius = 8
+        loginButton.layer.shadowRadius = 8
         
-        registerButton.addTarget(
+        loginButton.addTarget(
             self,
-            action: #selector(handleRegister),
+            action: #selector(handleLogin),
             for: .touchUpInside
         )
         
         NSLayoutConstraint.activate([
-            registerButton.heightAnchor.constraint(
+            loginButton.heightAnchor.constraint(
                 equalToConstant: 52
             )
         ])
     }
     
+    // MARK: - Register Button
     
-    private func setupBackButton() {
-        backButton.translatesAutoresizingMaskIntoConstraints = false
+    private func setupRegisterButton() {
+        goToRegisterButton.translatesAutoresizingMaskIntoConstraints = false
         
-        let text = "¿Ya tienes una cuenta? "
-        let loginText = "Inicia sesión"
+        let text = "¿No tienes cuenta? "
+        let registerText = "Regístrate aquí"
         
         let attributedString = NSMutableAttributedString(
-            string: text + loginText
+            string: text + registerText
         )
         
         attributedString.addAttribute(
@@ -444,10 +453,15 @@ final class RegisterViewController: UIViewController {
         
         attributedString.addAttribute(
             .foregroundColor,
-            value: primaryColor,
+            value: UIColor(
+                red: 0.30,
+                green: 0.25,
+                blue: 0.85,
+                alpha: 1.0
+            ),
             range: NSRange(
                 location: text.count,
-                length: loginText.count
+                length: registerText.count
             )
         )
         
@@ -463,26 +477,27 @@ final class RegisterViewController: UIViewController {
             )
         )
         
-        backButton.setAttributedTitle(
+        goToRegisterButton.setAttributedTitle(
             attributedString,
             for: .normal
         )
         
-        backButton.addTarget(
+        goToRegisterButton.addTarget(
             self,
-            action: #selector(goBackToLogin),
+            action: #selector(goToRegister),
             for: .touchUpInside
         )
     }
-
+    
+    // MARK: - Stack
     
     private func setupStack() {
         let stack = UIStackView(
             arrangedSubviews: [
                 userContainer,
                 passwordContainer,
-                registerButton,
-                backButton
+                loginButton,
+                goToRegisterButton
             ]
         )
         
@@ -512,6 +527,7 @@ final class RegisterViewController: UIViewController {
         ])
     }
     
+    // MARK: - Keyboard
     
     private func setupKeyboard() {
         userTextField.delegate = self
@@ -529,22 +545,21 @@ final class RegisterViewController: UIViewController {
         view.endEditing(true)
     }
     
-
+    // MARK: - Login
     
-    @objc private func handleRegister() {
+    @objc private func handleLogin() {
         view.endEditing(true)
         
         let username = userTextField.text?
-            .trimmingCharacters(
-                in: .whitespacesAndNewlines
-            ) ?? ""
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         
         let password = passTextField.text ?? ""
         
+        // Validación básica
         if username.isEmpty {
             showAlert(
                 title: "Campo vacío",
-                message: "Por favor ingresa un usuario."
+                message: "Por favor ingresa tu usuario."
             )
             return
         }
@@ -552,12 +567,14 @@ final class RegisterViewController: UIViewController {
         if password.isEmpty {
             showAlert(
                 title: "Campo vacío",
-                message: "Por favor ingresa una contraseña."
+                message: "Por favor ingresa tu contraseña."
             )
             return
         }
         
-        viewModel.register(
+        setLoading(true)
+        
+        viewModel.login(
             username: username,
             pass: password
         ) { [weak self] success, message in
@@ -567,46 +584,64 @@ final class RegisterViewController: UIViewController {
                     return
                 }
                 
+                self.setLoading(false)
+                
                 if success {
-                    let alert = UIAlertController(
-                        title: "Éxito",
-                        message: "Usuario registrado correctamente.",
-                        preferredStyle: .alert
+                    let homeVC = HomeViewController()
+                    let nav = UINavigationController(
+                        rootViewController: homeVC
                     )
                     
-                    alert.addAction(
-                        UIAlertAction(
-                            title: "OK",
-                            style: .default
-                        ) { [weak self] _ in
-                            self?.navigationController?
-                                .popViewController(
-                                    animated: true
-                                )
-                        }
-                    )
+                    nav.modalPresentationStyle = .fullScreen
                     
                     self.present(
-                        alert,
+                        nav,
                         animated: true
                     )
                 } else {
                     self.showAlert(
-                        title: "Validación",
-                        message: message ?? "Error"
+                        title: "Error",
+                        message: message ?? "Error desconocido"
                     )
                 }
             }
         }
     }
     
+    // MARK: - Register
     
-    @objc private func goBackToLogin() {
-        navigationController?.popViewController(
+    @objc private func goToRegister() {
+        let registerVC = RegisterViewController()
+        
+        navigationController?.pushViewController(
+            registerVC,
             animated: true
         )
     }
     
+    // MARK: - Loading
+    
+    private func setLoading(_ loading: Bool) {
+        loginButton.isEnabled = !loading
+        
+        if loading {
+            loginButton.setTitle(
+                "Iniciando sesión...",
+                for: .normal
+            )
+            
+            activityIndicator.startAnimating()
+        } else {
+            loginButton.setTitle(
+                "Iniciar Sesión",
+                for: .normal
+            )
+            
+            activityIndicator.stopAnimating()
+        }
+    }
+    
+    // MARK: - Alert
     
     private func showAlert(
         title: String,
@@ -632,8 +667,9 @@ final class RegisterViewController: UIViewController {
     }
 }
 
+// MARK: - UITextFieldDelegate
 
-extension RegisterViewController: UITextFieldDelegate {
+extension LoginViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(
         _ textField: UITextField
@@ -643,7 +679,7 @@ extension RegisterViewController: UITextFieldDelegate {
             passTextField.becomeFirstResponder()
         } else {
             textField.resignFirstResponder()
-            handleRegister()
+            handleLogin()
         }
         
         return true

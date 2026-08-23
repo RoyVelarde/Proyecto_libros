@@ -10,13 +10,8 @@ import Foundation
 
 final class HomeViewModel {
     private let bookService: BookServiceProtocol
-    
     var searchResults: [BookItem] = []
-    var favorites: [BookItem] = [] {
-        didSet {
-            AuthManager.shared.saveFavorites(favorites)
-        }
-    }
+    var favorites: [BookItem] = []
     
     var onDataUpdated: (() -> Void)?
     var onError: ((String) -> Void)?
@@ -37,7 +32,7 @@ final class HomeViewModel {
                 }
             } catch {
                 DispatchQueue.main.async {
-                    self.onError?("Error al buscar libros: \(error.localizedDescription)")
+                    self.onError?("Error de conexión")
                 }
             }
         }
@@ -49,9 +44,11 @@ final class HomeViewModel {
     }
     
     func addFavorite(_ book: BookItem) {
-        if !favorites.contains(where: { $0.id == book.id }) {
-            favorites.append(book)
-            onDataUpdated?()
+        var currentFavs = AuthManager.shared.loadFavorites()
+        if !currentFavs.contains(where: { $0.id == book.id }) {
+            currentFavs.append(book)
+            AuthManager.shared.saveFavorites(currentFavs)
+            self.favorites = currentFavs
         }
     }
 }

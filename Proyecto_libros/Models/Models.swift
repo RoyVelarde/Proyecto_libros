@@ -26,6 +26,20 @@ struct VolumeInfo: Codable, Hashable {
     let authors: [String]?
     let description: String?
     let imageLinks: ImageLinks?
+    let publisher: String?
+    let publishedDate: String?
+    let industryIdentifiers: [IndustryIdentifier]?
+    let pageCount: Int?
+    let categories: [String]?
+    let averageRating: Double?
+    let ratingsCount: Int?
+    let language: String?
+    let previewLink: String?
+}
+
+struct IndustryIdentifier: Codable, Hashable {
+    let type: String?
+    let identifier: String?
 }
 
 struct ImageLinks: Codable, Hashable {

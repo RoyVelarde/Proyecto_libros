@@ -1,15 +1,15 @@
 //
-//  HomeViewController.swift
+//  FavoritesViewController.swift
 //  Proyecto_libros
 //
-//  Created by XCODE on 11/08/26.
+//  Created by XCODE on 23/08/26.
 //
-
 
 import UIKit
 
-final class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
-    private let viewModel = HomeViewModel()
+final class FavoritesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+    private let viewModel = FavoritesViewModel()
+    private let homeViewModel = HomeViewModel()
     private let tableView = UITableView()
     private let searchBar = UISearchBar()
     
@@ -19,40 +19,44 @@ final class HomeViewController: UIViewController, UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupBindings()
         setupUI()
-        updateEmptyState(isInitial: true)
+        setupBindings()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.refreshFavorites()
+        animateTableReload()
+        updateEmptyState()
     }
     
     private func setupBindings() {
         viewModel.onDataUpdated = { [weak self] in
             DispatchQueue.main.async {
-                self?.animateTableReload()
-                self?.updateEmptyState(isInitial: false)
+                self?.tableView.reloadData()
+                self?.updateEmptyState()
             }
         }
-        viewModel.onError = { [weak self] message in
-            self?.showAlert(title: "Error", message: message)
-        }
     }
-    
-    private func updateEmptyState(isInitial: Bool) {
-        let hasResults = !viewModel.searchResults.isEmpty
-        let searchText = searchBar.text ?? ""
+
+    private func updateEmptyState() {
+        let hasResults = !viewModel.filteredFavorites.isEmpty
+        let isSearching = !(searchBar.text?.isEmpty ?? true)
         
-        UIView.animate(withDuration: 0.4, animations: {
+        UIView.animate(withDuration: 0.4) {
             self.emptyStateContainer.alpha = hasResults ? 0 : 1
             self.tableView.alpha = hasResults ? 1 : 0
-        })
+        }
         
         if !hasResults {
             let config = UIImage.SymbolConfiguration(pointSize: 80, weight: .thin)
-            if searchText.isEmpty || isInitial {
-                emptyStateIcon.image = UIImage(systemName: "shippingbox", withConfiguration: config)
-                emptyStateLabel.text = "¡Busca algo increíble!"
+            
+            if isSearching {
+                emptyStateIcon.image = UIImage(systemName: "magnifyingglass", withConfiguration: config)
+                emptyStateLabel.text = "No hay coincidencias en tu biblioteca"
             } else {
-                emptyStateIcon.image = UIImage(systemName: "face.dashed", withConfiguration: config)
-                emptyStateLabel.text = "No encontramos nada...\nPrueba con otra cosa"
+                emptyStateIcon.image = UIImage(systemName: "heart.circle", withConfiguration: config)
+                emptyStateLabel.text = "Tu lista está vacía\nAgrega libros para verlos aquí"
             }
             
             emptyStateIcon.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
@@ -61,25 +65,24 @@ final class HomeViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         }
     }
-    
+
     private func animateTableReload() {
         tableView.reloadData()
         let cells = tableView.visibleCells
-        let tableViewHeight = tableView.bounds.size.height
         
         for (index, cell) in cells.enumerated() {
-            cell.transform = CGAffineTransform(translationX: 0, y: tableViewHeight)
             cell.alpha = 0
+            cell.transform = CGAffineTransform(translationX: -20, y: 0)
             
             UIView.animate(
-                withDuration: 0.6,
-                delay: 0.05 * Double(index),
+                withDuration: 0.5,
+                delay: 0.04 * Double(index),
                 usingSpringWithDamping: 0.8,
                 initialSpringVelocity: 0,
-                options: .curveEaseInOut,
+                options: .curveEaseOut,
                 animations: {
-                    cell.transform = .identity
                     cell.alpha = 1
+                    cell.transform = .identity
                 }
             )
         }
@@ -87,14 +90,14 @@ final class HomeViewController: UIViewController, UITableViewDelegate, UITableVi
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
-        title = "Explorar"
+        title = "Mis Libros"
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        let aboutButton = UIBarButtonItem(image: UIImage(systemName: "info.circle"), style: .plain, target: self, action: #selector(openAbout))
-        navigationItem.rightBarButtonItem = aboutButton
+        let settingsButton = UIBarButtonItem(image: UIImage(systemName: "gearshape"), style: .plain, target: self, action: #selector(openSettings))
+        navigationItem.rightBarButtonItem = settingsButton
         
         searchBar.delegate = self
-        searchBar.placeholder = "Título, autor o ISBN..."
+        searchBar.placeholder = "Buscar en mis favoritos..."
         searchBar.searchBarStyle = .minimal
         
         tableView.delegate = self
@@ -150,58 +153,51 @@ final class HomeViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.alpha = 0
-        cell.transform = CGAffineTransform(scaleX: 0.95, y: 0.95).translatedBy(x: 0, y: 10)
-        UIView.animate(withDuration: 0.4) {
+        cell.transform = CGAffineTransform(scaleX: 0.98, y: 0.98)
+        UIView.animate(withDuration: 0.3) {
             cell.alpha = 1
             cell.transform = .identity
         }
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel.filterFavorites(with: searchText)
+        updateEmptyState()
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        viewModel.searchBooks(query: searchBar.text ?? "")
         searchBar.resignFirstResponder()
     }
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            viewModel.clearSearch()
-            updateEmptyState(isInitial: true)
-        }
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.searchResults.count
+        return viewModel.filteredFavorites.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "BookCell", for: indexPath) as? BookTableViewCell else {
             return UITableViewCell()
         }
-        let book = viewModel.searchResults[indexPath.row]
-        cell.configure(with: book)
+        cell.configure(with: viewModel.filteredFavorites[indexPath.row])
         cell.accessoryType = .disclosureIndicator
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let book = viewModel.searchResults[indexPath.row]
-        let detailVM = DetailViewModel(book: book, homeViewModel: viewModel)
-        let detailVC = DetailViewController(viewModel: detailVM)
-        navigationController?.pushViewController(detailVC, animated: true)
+        let book = viewModel.filteredFavorites[indexPath.row]
+        let detailVM = DetailViewModel(book: book, homeViewModel: homeViewModel)
+        navigationController?.pushViewController(DetailViewController(viewModel: detailVM), animated: true)
     }
     
-    @objc private func openAbout() {
-        let message = "\nEQUIPO DE DESARROLLO\n\n Jazmin Anabel Herhuay Huamán\n Deborah Elena Vela Villamonte\n Kevin Arnold Eca Pilcon\n Cristopher Joau Morales Sajami \n Roy Heberth Velarde Laines"
-        let alert = UIAlertController(title: "Acerca de la App", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Entendido", style: .default))
-        alert.view.tintColor = .systemIndigo
-        present(alert, animated: true)
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            viewModel.removeFavorite(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            updateEmptyState()
+        }
     }
     
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+    @objc private func openSettings() {
+        navigationController?.pushViewController(SettingsViewController(), animated: true)
     }
 }
