@@ -11,32 +11,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
             guard let windowScene = (scene as? UIWindowScene) else { return }
-                
             let window = UIWindow(windowScene: windowScene)
-                
-                if AuthManager.shared.isLoggedIn {
-                    let homeNav = UINavigationController(rootViewController: HomeViewController())
-                    homeNav.tabBarItem = UITabBarItem(title: "Explorar", image: UIImage(systemName: "magnifyingglass"), tag: 0)
-                    
-                    let favNav = UINavigationController(rootViewController: FavoritesViewController())
-                    favNav.tabBarItem = UITabBarItem(title: "Favoritos", image: UIImage(systemName: "heart.fill"), tag: 1)
-                    
-                    let tabBarController = UITabBarController()
-                    tabBarController.viewControllers = [homeNav, favNav]
-                    tabBarController.tabBar.tintColor = .systemRed
-                    
-                    window.rootViewController = tabBarController
-                } else {
-                    let loginVC = LoginViewController()
-                    window.rootViewController = UINavigationController(rootViewController: loginVC)
-                }
-                
-                self.window = window
-                window.makeKeyAndVisible()
+            self.window = window
+            checkInitialRootViewController()
+            window.makeKeyAndVisible()
         }
+    
+    func checkInitialRootViewController() {
+        DispatchQueue.main.async {
+            guard let window = self.window else { return }
+            
+            if AuthManager.shared.isLoggedIn {
+                let homeNav = UINavigationController(rootViewController: HomeViewController())
+                homeNav.tabBarItem = UITabBarItem(title: "Explorar", image: UIImage(systemName: "magnifyingglass"), tag: 0)
+                
+                let favNav = UINavigationController(rootViewController: FavoritesViewController())
+                favNav.tabBarItem = UITabBarItem(title: "Favoritos", image: UIImage(systemName: "heart.fill"), tag: 1)
+                
+                let tabBarController = UITabBarController()
+                tabBarController.viewControllers = [homeNav, favNav]
+                tabBarController.tabBar.tintColor = .systemRed
+                
+                window.rootViewController = tabBarController
+            } else {
+                let loginVC = LoginViewController()
+                window.rootViewController = UINavigationController(rootViewController: loginVC)
+            }
+            window.makeKeyAndVisible()
+        }
+    }
     
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

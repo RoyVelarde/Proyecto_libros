@@ -578,17 +578,9 @@ final class LoginViewController: UIViewController {
                 self.setLoading(false)
                 
                 if success {
-                    let homeVC = HomeViewController()
-                    let nav = UINavigationController(
-                        rootViewController: homeVC
-                    )
-                    
-                    nav.modalPresentationStyle = .fullScreen
-                    
-                    self.present(
-                        nav,
-                        animated: true
-                    )
+                    if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                            sceneDelegate.checkInitialRootViewController()
+                    }
                 } else {
                     self.showAlert(
                         title: "Error",
