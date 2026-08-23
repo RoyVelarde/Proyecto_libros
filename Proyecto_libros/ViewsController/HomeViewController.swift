@@ -192,7 +192,7 @@ final class HomeViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     @objc private func openAbout() {
-        let message = "\nEQUIPO DE DESARROLLO\n\n Jazmin Anabel Herhuay Huamán\n Deborah Elena Vela Villamonte\n Kevin Arnold Eca Pilcon\n Cristopher Joau Morales Sajami \n Roy Heberth Velarde Laines"
+        let message = "\nEQUIPO DE DESARROLLO\n\n Deborah Elena Vela Villamonte\n Kevin Arnold Eca Pilcon\n Cristopher Joau Morales Sajami \n Roy Heberth Velarde Laines"
         let alert = UIAlertController(title: "Acerca de la App", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Entendido", style: .default))
         alert.view.tintColor = .systemIndigo

@@ -9,19 +9,15 @@
 ```
 
 ```
-2. HERHUAY HUAMÁN, Jazmin Anabel
+2. MORALES SAJAMI, Cristopher Joau
 ```
 
 ```
-3. MORALES SAJAMI, Cristopher Joau
+3. VELA VILLAMONTE, Deborah Elena
 ```
 
 ```
-4. VELA VILLAMONTE, Deborah Elena
-```
-
-```
-5. VELARDE LAINES, Roy heberth
+4. VELARDE LAINES, Roy heberth
 ```
 
 ## CIBERTEC 2026
