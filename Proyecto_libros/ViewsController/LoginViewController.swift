@@ -357,8 +357,6 @@ final class LoginViewController: UIViewController {
         ])
     }
     
-    // MARK: - TextField Container
-    
     private func setupTextFieldContainer(_ container: UIView) {
         container.translatesAutoresizingMaskIntoConstraints = false
         
@@ -379,8 +377,6 @@ final class LoginViewController: UIViewController {
             )
         ])
     }
-    
-    // MARK: - Login Button
     
     private func setupLoginButton() {
         loginButton.translatesAutoresizingMaskIntoConstraints = false
@@ -527,8 +523,6 @@ final class LoginViewController: UIViewController {
         ])
     }
     
-    // MARK: - Keyboard
-    
     private func setupKeyboard() {
         userTextField.delegate = self
         passTextField.delegate = self
@@ -545,8 +539,6 @@ final class LoginViewController: UIViewController {
         view.endEditing(true)
     }
     
-    // MARK: - Login
-    
     @objc private func handleLogin() {
         view.endEditing(true)
         
@@ -555,7 +547,6 @@ final class LoginViewController: UIViewController {
         
         let password = passTextField.text ?? ""
         
-        // Validación básica
         if username.isEmpty {
             showAlert(
                 title: "Campo vacío",
@@ -608,8 +599,6 @@ final class LoginViewController: UIViewController {
         }
     }
     
-    // MARK: - Register
-    
     @objc private func goToRegister() {
         let registerVC = RegisterViewController()
         
@@ -618,8 +607,6 @@ final class LoginViewController: UIViewController {
             animated: true
         )
     }
-    
-    // MARK: - Loading
     
     private func setLoading(_ loading: Bool) {
         loginButton.isEnabled = !loading
@@ -640,8 +627,6 @@ final class LoginViewController: UIViewController {
             activityIndicator.stopAnimating()
         }
     }
-    
-    // MARK: - Alert
     
     private func showAlert(
         title: String,
@@ -666,8 +651,6 @@ final class LoginViewController: UIViewController {
         )
     }
 }
-
-// MARK: - UITextFieldDelegate
 
 extension LoginViewController: UITextFieldDelegate {
     
